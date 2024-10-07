@@ -50,21 +50,17 @@ public class TeacherServiceImpl implements ITeacherService {
                 throw new EntityAlreadyExistsException("Teacher", "Teacher with vat: " + insertDTO.getVat() + " already exists");
             }
 
-//            teacherDAO.getByVat(insertDTO.getVat()).orElseThrow(() ->
-//                    new EntityAlreadyExistsException("Teacher", "Teacher with vat: "
-//                    + insertDTO.getVat() + " already exists"));
-
             TeacherReadOnlyDTO readOnlyDTO = teacherDAO.insert(teacher)
                     .map(Mapper::mapToTeacherReadOnlyDTO)
                     .orElseThrow(() -> new EntityInvalidArgumentException("Teacher", "Teacher with vat: " +
                             insertDTO.getVat() + " not inserted"));
             JPAHelper.commitTransaction();
-            LOGGER.info("Teacher with id: {}, vat: {},  firstname: {}, lastname: {} inserted",
+            LOGGER.info("Teacher with id: {}, vat: {},  firstname {}, lastname {} inserted",
                     teacher.getId(), teacher.getVat(), teacher.getLastname(), teacher.getFirstname());
             return readOnlyDTO;
         } catch (Exception e) {
             JPAHelper.rollbackTransaction();
-            LOGGER.error("Error. Teacher not inserted: vat: {}, firstname: {} , lastname: {}",
+            LOGGER.error("Error. Teacher not inserted: vat: {}, firstname: {} , lastname {}",
                     insertDTO.getVat(), insertDTO.getFirstname(), insertDTO.getLastname());
             throw e;
         } finally {
