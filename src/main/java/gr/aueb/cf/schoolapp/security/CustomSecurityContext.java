@@ -12,6 +12,7 @@ import java.security.Principal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomSecurityContext implements SecurityContext {
+
     private User user;
 
     @Override

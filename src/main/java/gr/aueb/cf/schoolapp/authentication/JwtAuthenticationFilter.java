@@ -1,6 +1,5 @@
 package gr.aueb.cf.schoolapp.authentication;
 
-import gr.aueb.cf.schoolapp.core.exceptions.EntityNotAuthorizedException;
 import gr.aueb.cf.schoolapp.dao.IUserDAO;
 import gr.aueb.cf.schoolapp.model.User;
 import gr.aueb.cf.schoolapp.security.CustomSecurityContext;
@@ -19,6 +18,7 @@ import jakarta.ws.rs.ext.Provider;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
+import java.net.URI;
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -44,16 +44,14 @@ public class JwtAuthenticationFilter implements ContainerRequestFilter {
         }
 
         String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-        if (authorizationHeader == null || authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             throw new NotAuthorizedException("Authorization header must be provided");
         }
 
         String token = authorizationHeader.substring("Bearer ".length()).trim();
 
         try {
-
             String username = jwtService.extractSubject(token);
-
             if (username != null &&
                     securityContext == null || securityContext.getUserPrincipal() == null) {
                 User user = userDAO.getByUsername(username).orElse(null);
@@ -64,13 +62,12 @@ public class JwtAuthenticationFilter implements ContainerRequestFilter {
                     //
                 }
             }
-
         } catch (Exception e) {
             throw new NotAuthorizedException("Invalid token");
         }
     }
 
     private boolean isPublicPath(String path) {
-        return path.equals("/auth/register") || path.equals("auth/login");
+        return path.equals("auth/register") || path.equals("auth/login");
     }
 }

@@ -34,9 +34,7 @@ import java.util.Map;
 public class AuthRestController {
 
     private final IUserService userService;
-
     private final AuthenticationProvider authenticationProvider;
-
     private final JwtService jwtService;
 
     @POST
@@ -86,7 +84,4 @@ public class AuthRestController {
         AuthenticationResponseDTO authenticationResponseDTO = new AuthenticationResponseDTO(token);
         return Response.status(Response.Status.OK).entity(authenticationResponseDTO).build();
     }
-
-
-
 }
